@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Recipes</string>
+
+    <string name="title_app">Tasty Tips</string>
+    <string name="hello_foodie">Hello Foodie!</string>
+    <string name="hello_question">Which Food Would You Like To Cook?</string>
+    <string name="search">Search Recipe</string>
+    <string name="categories">Categories</string>
+    <string name="popular_recipes">Popular Recipes</string>
+
+
+</resources>
