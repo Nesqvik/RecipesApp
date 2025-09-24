@@ -1,4 +1,4 @@
-package com.kakao.recipes.model
+package com.kakao.recipes.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import com.kakao.recipes.RecipesKeys
 
 
-@Entity
+@Entity(tableName = "recipes")
 data class Recipe(
     //@PrimaryKey(autoGenerate = true) val id: Int = 0,
     @PrimaryKey val id: Int,
@@ -15,6 +15,12 @@ data class Recipe(
     var title: String = "",
 
     @SerializedName(RecipesKeys.IMAGE_RECIPE)
-    var image: String = ""
+    var image: String = "",
+
+    @SerializedName(RecipesKeys.SERVINGS)
+    var servings: Int = 0,
+
+    @SerializedName(RecipesKeys.READY_IN_MINUTES)
+    var readyInMinutes: Int = 0
 
 )

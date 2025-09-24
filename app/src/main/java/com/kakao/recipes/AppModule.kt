@@ -2,8 +2,10 @@ package com.kakao.recipes
 
 import android.content.Context
 import com.kakao.recipes.interfaces.RecipeRepositoryInterface
+import com.kakao.recipes.local.AppDatabase
+import com.kakao.recipes.local.RecipeDao
 import com.kakao.recipes.repositories.RecipeRepository
-import com.kakao.recipes.viewModels.RecipeViewModel
+import com.kakao.recipes.useCases.GetRecipesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,14 +25,31 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMemberRepository(
-        context: Context
-    ): RecipeRepositoryInterface {
-        return RecipeRepository(context)
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getDatabase(context)
+    }
+
+    // Provides the RecipeDao
+    @Provides
+    @Singleton
+    fun provideRecipeDao(appDatabase: AppDatabase): RecipeDao {
+        return appDatabase.recipeDao()
     }
 
     @Provides
-    fun provideUserViewModel(recipeRepositoryInterface: RecipeRepositoryInterface) =
-        RecipeViewModel(recipeRepositoryInterface)
+    @Singleton
+    fun provideRecipeRepository(
+        context: Context,
+        recipeDao: RecipeDao
+    ): RecipeRepositoryInterface {
+        return RecipeRepository(context, recipeDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetRecipesUseCase(recipeRepositoryInterface: RecipeRepositoryInterface): GetRecipesUseCase {
+        return GetRecipesUseCase(recipeRepositoryInterface)
+    }
+
 }
 

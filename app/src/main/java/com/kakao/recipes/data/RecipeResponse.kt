@@ -1,4 +1,4 @@
-package com.kakao.recipes.model
+package com.kakao.recipes.data
 
 data class RecipesResponse(
     val recipes: List<Recipe>

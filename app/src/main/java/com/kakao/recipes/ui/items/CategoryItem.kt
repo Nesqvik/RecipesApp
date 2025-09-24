@@ -16,7 +16,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kakao.recipes.R
-import com.kakao.recipes.model.RecipeCategory
+import com.kakao.recipes.data.RecipeCategory
 
 
 @Composable
