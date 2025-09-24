@@ -11,5 +11,9 @@
     <color name="hello_green_color">#33A621</color>
     <color name="question_green_color">#81BF7A</color>
     <color name="recipe_category_back_color">#66EDED8A</color>
+    <color name="recipe_category_border_color">#EDED8A</color>
+    <color name="recipe_details_title_back_color">#4DEDED8A</color>
+    <color name="icons_color">#3B803F</color>
+    <color name="appbar_color">#809C5243</color>
 
 </resources>

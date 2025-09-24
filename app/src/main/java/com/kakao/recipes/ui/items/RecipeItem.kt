@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -50,8 +52,9 @@ fun RecipeItem(recipe: Recipe, navController: NavController, onRecipeItemClick: 
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = recipe.title,
-                    fontSize = 18.sp
-                )
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.lato_regular)),
+                    )
                 Text("[gluten free]")
 
                 Spacer(modifier = Modifier.height(8.dp))

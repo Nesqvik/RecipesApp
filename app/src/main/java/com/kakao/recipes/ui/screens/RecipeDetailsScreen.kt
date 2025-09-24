@@ -20,22 +20,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import coil.compose.rememberAsyncImagePainter
@@ -63,7 +64,7 @@ fun RecipeDetailsScreen(
                 title = { Text("Tasty Tips") },
                 navigationIcon = {
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.Menu, contentDescription = "menu", tint = Color.Gray)
+                        Icon(Icons.Default.Menu, contentDescription = "menu", tint = Color.White)
                     }
                 },
                 actions = {
@@ -71,12 +72,16 @@ fun RecipeDetailsScreen(
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowLeft,
                             contentDescription = "Back",
-                            tint = Color.Gray,
+                            tint = Color.White,
                             modifier = Modifier.size(33.dp)
                         )
                     }
-                }
-
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorResource(R.color.appbar_color),
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
             )
         },
     ) { innerPadding ->
@@ -106,13 +111,14 @@ fun RecipeDetailsScreen(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .background(Color.White)
+                            .background(color = colorResource(R.color.recipe_details_title_back_color))
                             .padding(vertical = 12.dp, horizontal = 16.dp)
                     ) {
                         Text(
                             text = recipe?.title.toString(),
-                            fontSize = 20.sp,
+                            fontSize = 23.sp,
                             textAlign = TextAlign.Center,
+                            fontFamily = FontFamily(Font(R.font.lato_regular)),
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -175,8 +181,10 @@ fun RecipeDetailsScreen(
                 ) {
                     Text(
                         text = recipe?.title.toString(),
-                        modifier = Modifier.padding(16.dp)
-                    )
+                        modifier = Modifier.padding(18.dp),
+                        fontFamily = FontFamily(Font(R.font.lato_regular)),
+
+                        )
                 }
             }
 
@@ -218,13 +226,17 @@ fun IngredientRow() {
                 .background(Color(0xFFF0F0F0)),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "*")
+            Image(
+                painter = painterResource(id = R.drawable.ingred),
+                contentDescription = "Image inside box",
+                modifier = Modifier.size(24.dp)
+            )
         }
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Column {
-            Text(text = "item name", fontWeight = FontWeight.SemiBold)
+            Text(text = "Ingredient", fontWeight = FontWeight.SemiBold)
             Text(text = "5")
         }
     }

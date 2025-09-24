@@ -1,6 +1,8 @@
 package com.kakao.recipes.viewModels
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.recipes.interfaces.RecipeRepositoryInterface
@@ -16,7 +18,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 
 @HiltViewModel
 class RecipeViewModel @Inject constructor(
@@ -37,6 +41,33 @@ class RecipeViewModel @Inject constructor(
     private val _recipe = MutableStateFlow<Recipe?>(null)
     val recipe: StateFlow<Recipe?> = _recipe
 
+    var isLoading by mutableStateOf(false)
+    private set
+
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    init {
+        // Observe the search query changes and update the recipe list
+        viewModelScope.launch {
+            searchQuery.collect { query ->
+                loadRecipes(query)
+            }
+        }
+    }
+
+    private fun loadRecipes(query: String) {
+        viewModelScope.launch {
+            recipeDao.searchRecipesByName("%$query%").collect { recipesList ->
+                _recipes.value = recipesList
+            }
+        }
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
 
     fun getRecipeById(id: Int) {
         viewModelScope.launch {
@@ -70,4 +101,6 @@ class RecipeViewModel @Inject constructor(
             }
         }
     }
+
+
 }

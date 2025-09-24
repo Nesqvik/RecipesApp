@@ -30,4 +30,7 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE id = :id LIMIT 1")
     fun getRecipeById(id: Int): Flow<Recipe>
 
+    @Query("SELECT * FROM recipes WHERE title LIKE :query ORDER BY title ASC")
+    fun searchRecipesByName(query: String): Flow<List<Recipe>>
+
 }

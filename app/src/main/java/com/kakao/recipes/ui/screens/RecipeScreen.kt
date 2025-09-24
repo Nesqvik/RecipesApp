@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,14 +30,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.material3.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -56,13 +63,22 @@ fun RecipeScreen(
 
     val recipeCategories by viewModel.recipeCategories.collectAsState()
     val recipes by viewModel.recipes.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val listState = rememberLazyListState()
 
     var selectedRecipe by remember { mutableStateOf<Recipe?>(null) }
 
+    val isEndReached = remember {
+        derivedStateOf { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == recipes.size - 1 }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getRecipeCategories()
         viewModel.getRecipes()
+
+        if (isEndReached.value) {
+           // viewModel.loadMoreRecipes()
+        }
     }
 
     Scaffold(
@@ -75,7 +91,7 @@ fun RecipeScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF6200EE),
+                    containerColor = colorResource(R.color.appbar_color),
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 )
@@ -96,7 +112,8 @@ fun RecipeScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.hello_foodie),
-                        fontSize = 28.sp,
+                        fontSize = 32.sp,
+                        fontFamily = FontFamily(Font(R.font.barriecito_regular)),
                         color = colorResource(R.color.hello_green_color)
                     )
                     Spacer(modifier = Modifier.height(18.dp))
@@ -107,23 +124,9 @@ fun RecipeScreen(
                 }
             }
 
-            OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                placeholder = { Text(text = stringResource(R.string.search)) },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = "Search")
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 25.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(2.dp, Color.Gray, RoundedCornerShape(12.dp)),
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.White
-                ),
-                shape = RoundedCornerShape(12.dp)
-            )
+            SearchBar(searchQuery = searchQuery, onSearchQueryChanged = {
+                viewModel.onSearchQueryChanged(it)
+            })
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -150,6 +153,38 @@ fun RecipeScreen(
 
     }
 }
+@Composable
+fun SearchBar(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = searchQuery,
+        onValueChange = { newQuery ->
+            onSearchQueryChanged(newQuery)
+        },
+        placeholder = { Text(text = stringResource(R.string.search)) },
+        leadingIcon = {
+            Icon(Icons.Default.Search, contentDescription = "Search")
+        },
+        trailingIcon = {
+            if (searchQuery.isNotEmpty()) {
+                IconButton(onClick = { onSearchQueryChanged("") }) {
+                    Icon(Icons.Default.Clear, contentDescription = "Clear Search")
+                }
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 25.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .border(2.dp, Color.Gray, RoundedCornerShape(12.dp)),
+        colors = TextFieldDefaults.colors(
+            cursorColor = Color.Gray,
+        ),
+        shape = RoundedCornerShape(12.dp)
+    )
+}
 
 @Composable
 fun RecipeCategoriesList(viewModel: RecipeViewModel, recipeCategories: List<RecipeCategory>) {
@@ -159,9 +194,10 @@ fun RecipeCategoriesList(viewModel: RecipeViewModel, recipeCategories: List<Reci
         modifier = Modifier
             .padding(vertical = 8.dp)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(18.dp),
+        horizontalArrangement = Arrangement.spacedBy(18.dp, Alignment.CenterHorizontally)
 
-        ) {
+
+    ) {
         items(categories) { category ->
             CategoryItem(category)
         }
@@ -170,12 +206,24 @@ fun RecipeCategoriesList(viewModel: RecipeViewModel, recipeCategories: List<Reci
 
 @Composable
 fun RecipesList(
-    viewModel: RecipeViewModel, recipesList: List<Recipe>, navController: NavController,
+    viewModel: RecipeViewModel,
+    recipesList: List<Recipe>,
+    navController: NavController,
     onItemClick: (Recipe)-> Unit) {
 
-    Log.d("fgbhnm,.", recipesList.toString())
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .collect { lastVisibleIndex ->
+                if (lastVisibleIndex == recipesList.lastIndex) {
+                  //  viewModel.loadNextPage()
+                }
+            }
+    }
 
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .padding(vertical = 8.dp)
             .fillMaxWidth(),
@@ -187,6 +235,18 @@ fun RecipesList(
 
             })
 
+        }
+        item {
+            if (viewModel.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
 }

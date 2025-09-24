@@ -1,6 +1,7 @@
 package com.kakao.recipes.ui.items
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +31,7 @@ fun CategoryItem(category: RecipeCategory) {
             modifier = Modifier
                 .size(58.dp)
                 .clip(CircleShape)
+                .border(1.dp, color = colorResource(R.color.recipe_category_border_color), CircleShape)
                 .background(colorResource(id = R.color.recipe_category_back_color)),
             contentAlignment = Alignment.Center
         ) {
