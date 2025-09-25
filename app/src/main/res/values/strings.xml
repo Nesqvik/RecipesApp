@@ -7,6 +7,7 @@
     <string name="search">Search Recipe</string>
     <string name="categories">Categories</string>
     <string name="popular_recipes">Popular Recipes</string>
-
+    <string name="no_internet_message">No internet connection</string>
+    <string name="no_recipes_found">No recipes found</string>
 
 </resources>

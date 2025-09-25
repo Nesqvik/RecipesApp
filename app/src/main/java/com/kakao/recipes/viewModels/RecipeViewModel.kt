@@ -12,25 +12,22 @@ import com.kakao.recipes.local.RecipeDao
 import com.kakao.recipes.useCases.GetRecipesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
+
 
 @HiltViewModel
 class RecipeViewModel @Inject constructor(
 
     private val recipeRepositoryInterface: RecipeRepositoryInterface,
     private val recipeDao: RecipeDao,
-    private val getRecipesUseCase: GetRecipesUseCase
+    private val getRecipesUseCase: GetRecipesUseCase,
 
-
-) : ViewModel() {
+    ) : ViewModel() {
 
     private val _recipeCategories = MutableStateFlow<List<RecipeCategory>>(emptyList())
     val recipeCategories: StateFlow<List<RecipeCategory>> = _recipeCategories
@@ -42,18 +39,56 @@ class RecipeViewModel @Inject constructor(
     val recipe: StateFlow<Recipe?> = _recipe
 
     var isLoading by mutableStateOf(false)
-    private set
+    var isEndReached by mutableStateOf(false)
 
+    private val _noInternet = MutableStateFlow<Boolean>(false)
+    val noInternet: StateFlow<Boolean> = _noInternet
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
     init {
-        // Observe the search query changes and update the recipe list
+        loadInitialRecipes()
+
         viewModelScope.launch {
             searchQuery.collect { query ->
                 loadRecipes(query)
             }
+        }
+    }
+
+    private fun loadInitialRecipes() {
+        viewModelScope.launch {
+            isLoading = true
+            val new = recipeRepositoryInterface.loadMoreRecipes()
+            if (new == null) {
+                //_noInternet.value = true
+            } else {
+                //_noInternet.value = false
+                if (new.isEmpty()) {
+                    isEndReached = true
+                }
+            }
+            delay(2000)
+            isLoading = false
+        }
+    }
+
+    fun loadNextPage() {
+        if (isLoading || isEndReached) return
+
+        viewModelScope.launch {
+            isLoading = true
+            val more = recipeRepositoryInterface.loadMoreRecipes()
+            if (more == null) {
+                //_noInternet.value = true
+            } else {
+                //_noInternet.value = false
+                if (more.isEmpty()) {
+                    isEndReached = true
+                }
+            }
+            isLoading = false
         }
     }
 
@@ -83,24 +118,32 @@ class RecipeViewModel @Inject constructor(
 
     fun getRecipes() {
         viewModelScope.launch {
+
             try {
-                recipeRepositoryInterface.requestRecipes()
-                //_recipes.value = recipeRepositoryInterface.getRecipes()
+                val localRecipes = recipeDao.getRecipes().firstOrNull()
+                if (localRecipes.isNullOrEmpty()) {
+
+                    val result = recipeRepositoryInterface.requestRecipes()
+
+                    if (result.isFailure) {
+                        _noInternet.value = true
+                        return@launch
+                    } else {
+                        _noInternet.value = false
+                    }
+
+                    if (result.isFailure) {
+                        return@launch
+                    }
+                }
 
                 recipeDao.getRecipes().collect { recipes ->
                     _recipes.value = recipes
-                    Log.d("DatabaseCheckddd", "Recipes fetched: $recipes")
                 }
-
-                Log.d("DatabaseCheck", recipeDao.getRecipes().first().toString())
-                Log.d("DatabaseCheck", recipeDao.getRecipeById(631747).toString())
-
 
             } catch (e: Exception) {
                 Log.e("RecipesViewModel", "Failed to fetch recipes: ${e.message}")
             }
         }
     }
-
-
 }

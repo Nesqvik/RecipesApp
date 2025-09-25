@@ -29,7 +29,6 @@ object AppModule {
         return AppDatabase.getDatabase(context)
     }
 
-    // Provides the RecipeDao
     @Provides
     @Singleton
     fun provideRecipeDao(appDatabase: AppDatabase): RecipeDao {

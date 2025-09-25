@@ -1,6 +1,5 @@
 package com.kakao.recipes.ui.screens
 
-import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,6 +52,7 @@ import com.kakao.recipes.data.Recipe
 import com.kakao.recipes.data.RecipeCategory
 import com.kakao.recipes.ui.items.RecipeItem
 import com.kakao.recipes.viewModels.RecipeViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,8 +64,9 @@ fun RecipeScreen(
     val recipeCategories by viewModel.recipeCategories.collectAsState()
     val recipes by viewModel.recipes.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
-    val listState = rememberLazyListState()
+    val isNoInternet by viewModel.noInternet.collectAsState()
 
+    val listState = rememberLazyListState()
     var selectedRecipe by remember { mutableStateOf<Recipe?>(null) }
 
     val isEndReached = remember {
@@ -76,16 +77,18 @@ fun RecipeScreen(
         viewModel.getRecipeCategories()
         viewModel.getRecipes()
 
+
         if (isEndReached.value) {
-           // viewModel.loadMoreRecipes()
+            // viewModel.loadMoreRecipes()
         }
+
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.title_app), color = Color.White) },
-                navigationIcon = {
+                actions = {
                     IconButton(onClick = { }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
                     }
@@ -128,7 +131,8 @@ fun RecipeScreen(
                 viewModel.onSearchQueryChanged(it)
             })
 
-            Spacer(modifier = Modifier.height(16.dp))
+
+                Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = stringResource(R.string.categories),
@@ -145,14 +149,42 @@ fun RecipeScreen(
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 16.dp)
             )
+            if (searchQuery.isNotBlank() && recipes.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_recipes_found),
+                        color = Color.Gray,
+                        fontSize = 18.sp
+                    )
+                }
+            }
 
-            RecipesList(viewModel, recipes, navController,{ recipe ->
-                selectedRecipe = recipe
-            })
+            //NO INTERNET
+            if (isNoInternet && recipes.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_internet_message),
+                        fontSize = 19.sp
+                    )
+                }
+            } else {
+                RecipesList(viewModel, recipes, navController, { recipe ->
+                    selectedRecipe = recipe
+                })
+            }
         }
 
     }
 }
+
 @Composable
 fun SearchBar(
     searchQuery: String,
@@ -209,15 +241,32 @@ fun RecipesList(
     viewModel: RecipeViewModel,
     recipesList: List<Recipe>,
     navController: NavController,
-    onItemClick: (Recipe)-> Unit) {
+    onItemClick: (Recipe) -> Unit
+) {
 
     val listState = rememberLazyListState()
+    val isLoading by remember { derivedStateOf { viewModel.isLoading } }
 
+    /*  LaunchedEffect(listState) {
+          snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+              .collect { lastVisibleIndex ->
+                  if (lastVisibleIndex == recipesList.lastIndex) {
+                    //  viewModel.loadNextPage()
+                  }
+              }
+      }*/
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .distinctUntilChanged()
             .collect { lastVisibleIndex ->
-                if (lastVisibleIndex == recipesList.lastIndex) {
-                  //  viewModel.loadNextPage()
+                if (
+                    lastVisibleIndex != null &&
+                    lastVisibleIndex >= 2 &&
+                    lastVisibleIndex % 3 == 2 &&
+                    !viewModel.isLoading &&
+                    !viewModel.isEndReached
+                ) {
+                    viewModel.loadNextPage()
                 }
             }
     }
@@ -244,7 +293,9 @@ fun RecipesList(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        color = Color.Black
+                    )
                 }
             }
         }

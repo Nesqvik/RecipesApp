@@ -21,6 +21,13 @@ data class Recipe(
     var servings: Int = 0,
 
     @SerializedName(RecipesKeys.READY_IN_MINUTES)
-    var readyInMinutes: Int = 0
+    var readyInMinutes: Int = 0,
+
+    @SerializedName(RecipesKeys.SUMMARY)
+    var summary: String = "",
+
+    @SerializedName(RecipesKeys.EXTENDED_INGREDIENTS)
+    var extendedIngredients: List<ExtendedIngredient>
+
 
 )

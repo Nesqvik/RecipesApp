@@ -1,31 +1,51 @@
 package com.kakao.recipes.repositories
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import com.kakao.recipes.ApiClient
 import com.kakao.recipes.apiInterfaces.RecipesInterface
 import com.kakao.recipes.interfaces.RecipeRepositoryInterface
 import com.kakao.recipes.data.Recipe
 import com.kakao.recipes.data.RecipeCategory
 import com.kakao.recipes.local.RecipeDao
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
+import java.io.IOException
 import javax.inject.Inject
 
 
 class RecipeRepository @Inject constructor(
-    context: Context,
+    private val context: Context,
     val recipeDao: RecipeDao
 ) : RecipeRepositoryInterface {
 
     private var recipesInterface: RecipesInterface
     val recipesList: ArrayList<Recipe> = arrayListOf()
 
+
     init {
         this.recipesInterface =
             ApiClient.getInstance()!!.getClient().create(RecipesInterface::class.java)
 
+    }
+
+    override fun isConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return activeNetwork.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
+    override suspend fun loadMoreRecipes(): List<Recipe>? {
+        return try {
+            val response = recipesInterface.getRecipe()
+            val newRecipes = response.recipes
+            recipeDao.insertAll(newRecipes)
+            newRecipes
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     override fun getRecipeCategories(): List<RecipeCategory> {
@@ -38,18 +58,21 @@ class RecipeRepository @Inject constructor(
         )
     }
 
-    override suspend fun requestRecipes() {
-        try {
+    override suspend fun requestRecipes() : Result<Unit> {
+
+        if (!isConnected(context)) {
+            return Result.failure(IOException("No internet"))
+        }
+        return try {
             val response = recipesInterface.getRecipe()
+            recipesList.clear()
+            recipesList.addAll(response.recipes)
+            insertRecipes()
+            Result.success(Unit)
 
-               // recipesList.clear()
-                recipesList.addAll(response.recipes)
-                insertRecipes()
-
-
-            Log.d("Recipes_SUCCESS", recipesList.toString())
         } catch (e: Exception) {
             Log.e("Recipes_ERROR", "Network error: ${e.localizedMessage}")
+            Result.failure(e)
         }
     }
 

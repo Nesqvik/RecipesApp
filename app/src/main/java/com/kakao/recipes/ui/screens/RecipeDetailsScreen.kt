@@ -41,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import coil.compose.rememberAsyncImagePainter
 import com.kakao.recipes.R
+import com.kakao.recipes.data.ExtendedIngredient
+import com.kakao.recipes.data.Recipe
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,12 +64,12 @@ fun RecipeDetailsScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Tasty Tips") },
-                navigationIcon = {
+                actions = {
                     IconButton(onClick = {}) {
                         Icon(Icons.Default.Menu, contentDescription = "menu", tint = Color.White)
                     }
                 },
-                actions = {
+                navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowLeft,
@@ -180,11 +182,10 @@ fun RecipeDetailsScreen(
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = recipe?.title.toString(),
+                        text = recipe?.summary.toString(),
                         modifier = Modifier.padding(18.dp),
                         fontFamily = FontFamily(Font(R.font.lato_regular)),
-
-                        )
+                    )
                 }
             }
 
@@ -204,15 +205,25 @@ fun RecipeDetailsScreen(
                     .padding(horizontal = 8.dp),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                items(5) { item ->
-                    IngredientRow()
+                val ingredients = recipe?.extendedIngredients ?: emptyList()
+
+                if (ingredients.isNotEmpty()) {
+                    items(ingredients.size) { ingredient ->
+                        recipe?.let { IngredientRow(it,ingredient) }
+                    }
+                }
+                else {
+                    items(1) { item ->
+                        IngredientRowEmpty()
+                    }
                 }
             }
         }
     }
 }
+
 @Composable
-fun IngredientRow() {
+fun IngredientRowEmpty() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -240,6 +251,43 @@ fun IngredientRow() {
             Text(text = "5")
         }
     }
+}
+
+
+@Composable
+fun IngredientRow(recipe: Recipe, ingredientId: Int) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 8.dp)
+    ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFF0F0F0)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ingred),
+                        contentDescription = "Ingredient Icon",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = recipe.extendedIngredients[ingredientId].name,
+                )
+            }
+        }
 }
 
 
