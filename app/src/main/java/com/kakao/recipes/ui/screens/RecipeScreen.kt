@@ -231,7 +231,7 @@ fun RecipeCategoriesList(viewModel: RecipeViewModel, recipeCategories: List<Reci
 
     ) {
         items(categories) { category ->
-            CategoryItem(category)
+            CategoryItem(category, viewModel)
         }
     }
 }
@@ -247,14 +247,6 @@ fun RecipesList(
     val listState = rememberLazyListState()
     val isLoading by remember { derivedStateOf { viewModel.isLoading } }
 
-    /*  LaunchedEffect(listState) {
-          snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-              .collect { lastVisibleIndex ->
-                  if (lastVisibleIndex == recipesList.lastIndex) {
-                    //  viewModel.loadNextPage()
-                  }
-              }
-      }*/
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .distinctUntilChanged()

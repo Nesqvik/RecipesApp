@@ -47,6 +47,10 @@ class RecipeViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
+
+    private val _allRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+
+
     init {
         loadInitialRecipes()
 
@@ -139,6 +143,7 @@ class RecipeViewModel @Inject constructor(
 
                 recipeDao.getRecipes().collect { recipes ->
                     _recipes.value = recipes
+                    _allRecipes.value = recipes
                 }
 
             } catch (e: Exception) {
@@ -146,4 +151,17 @@ class RecipeViewModel @Inject constructor(
             }
         }
     }
+
+    fun filterBySelectedCategory(categoryName: String) {
+        val filteredList = _allRecipes.value.filter { recipe ->
+            recipe.dishTypes.any { it.equals(categoryName, ignoreCase = true) }
+        }
+        _recipes.value = filteredList
+    }
+
+    fun resetFilters() {
+        _recipes.value = _allRecipes.value
+    }
+
+
 }

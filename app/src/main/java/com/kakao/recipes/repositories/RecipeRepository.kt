@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 import com.kakao.recipes.ApiClient
+import com.kakao.recipes.RecipesKeys
 import com.kakao.recipes.apiInterfaces.RecipesInterface
 import com.kakao.recipes.interfaces.RecipeRepositoryInterface
 import com.kakao.recipes.data.Recipe
@@ -50,11 +51,11 @@ class RecipeRepository @Inject constructor(
 
     override fun getRecipeCategories(): List<RecipeCategory> {
         return listOf(
-            RecipeCategory(1, "Main Course"),
-            RecipeCategory(2, "Side Dish"),
-            RecipeCategory(3, "Dessert"),
-            RecipeCategory(4, "Appetizer"),
-            RecipeCategory(5, "Salad")
+            RecipeCategory(RecipesKeys.MAIN_COURSE, "Show all"),
+            RecipeCategory(RecipesKeys.SIDE_DISH, "Side Dish"),
+            RecipeCategory(RecipesKeys.DESSERT, "Dessert"),
+            RecipeCategory(RecipesKeys.APPETIZER, "Appetizer"),
+            RecipeCategory(RecipesKeys.SALAD, "Salad")
         )
     }
 
