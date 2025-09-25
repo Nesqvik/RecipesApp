@@ -26,6 +26,10 @@ data class Recipe(
     @SerializedName(RecipesKeys.SUMMARY)
     var summary: String = "",
 
+    @SerializedName(RecipesKeys.GLUTEN_FREE)
+    var glutenFree: Boolean = false,
+
+
     @SerializedName(RecipesKeys.EXTENDED_INGREDIENTS)
     var extendedIngredients: List<ExtendedIngredient>
 

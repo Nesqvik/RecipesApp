@@ -14,6 +14,7 @@ abstract class RecipesKeys {
         const val READY_IN_MINUTES = "readyInMinutes"
         const val SUMMARY = "summary"
         const val EXTENDED_INGREDIENTS = "extendedIngredients"
+        const val GLUTEN_FREE = "glutenFree"
 
     }
 }

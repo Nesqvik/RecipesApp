@@ -55,7 +55,10 @@ fun RecipeItem(recipe: Recipe, navController: NavController, onRecipeItemClick: 
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.lato_regular)),
                     )
-                Text("[gluten free]")
+
+                if(recipe.glutenFree) {
+                    Text("[gluten free]")
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
