@@ -247,7 +247,7 @@ fun RecipesList(
     val listState = rememberLazyListState()
     val isLoading by remember { derivedStateOf { viewModel.isLoading } }
 
-    LaunchedEffect(listState) {
+    /*LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .distinctUntilChanged()
             .collect { lastVisibleIndex ->
@@ -255,6 +255,28 @@ fun RecipesList(
                     lastVisibleIndex != null &&
                     lastVisibleIndex >= 2 &&
                     lastVisibleIndex % 3 == 2 &&
+                    !viewModel.isLoading &&
+                    !viewModel.isEndReached
+                ) {
+                    viewModel.loadNextPage()
+                }
+            }
+    }*/
+
+    val previousIndex = remember { mutableStateOf(0) }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+            .distinctUntilChanged()
+            .collect { lastVisibleIndex ->
+                val isScrollingDown = lastVisibleIndex != null && lastVisibleIndex > previousIndex.value
+                previousIndex.value = lastVisibleIndex ?: previousIndex.value
+
+                if (
+                    lastVisibleIndex != null &&
+                    lastVisibleIndex >= 2 &&
+                    lastVisibleIndex % 3 == 2 &&
+                    isScrollingDown &&
                     !viewModel.isLoading &&
                     !viewModel.isEndReached
                 ) {
@@ -270,7 +292,7 @@ fun RecipesList(
             .fillMaxWidth(),
 
         ) {
-        items(recipesList) { recipe ->
+        items(recipesList, key = { it.id }) { recipe ->
             RecipeItem(recipe = recipe, navController, onRecipeItemClick = {
                 onItemClick(recipe)
 
