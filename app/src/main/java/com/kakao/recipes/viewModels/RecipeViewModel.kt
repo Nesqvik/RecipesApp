@@ -49,6 +49,7 @@ class RecipeViewModel @Inject constructor(
 
 
     private val _allRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+    private var isFiltering by mutableStateOf(false)
 
 
     init {
@@ -79,7 +80,8 @@ class RecipeViewModel @Inject constructor(
     }
 
     fun loadNextPage() {
-        if (isLoading || isEndReached) return
+        if (isLoading || isEndReached || isFiltering) return
+
 
         viewModelScope.launch {
             isLoading = true
@@ -106,6 +108,7 @@ class RecipeViewModel @Inject constructor(
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
+        isFiltering = query.isNotBlank()
     }
 
     fun getRecipeById(id: Int) {
@@ -153,6 +156,7 @@ class RecipeViewModel @Inject constructor(
     }
 
     fun filterBySelectedCategory(categoryName: String) {
+        isFiltering = true
         val filteredList = _allRecipes.value.filter { recipe ->
             recipe.dishTypes.any { it.equals(categoryName, ignoreCase = true) }
         }
@@ -160,6 +164,7 @@ class RecipeViewModel @Inject constructor(
     }
 
     fun resetFilters() {
+        isFiltering = false
         _recipes.value = _allRecipes.value
     }
 
