@@ -3,7 +3,7 @@ package com.kakao.recipes
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.kakao.recipes.data.ExtendedIngredient
+import com.kakao.recipes.domain.model.ExtendedIngredient
 
 class Converters {
     @TypeConverter

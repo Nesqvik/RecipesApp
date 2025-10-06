@@ -1,11 +1,11 @@
 package com.kakao.recipes
 
 import android.content.Context
-import com.kakao.recipes.interfaces.RecipeRepositoryInterface
-import com.kakao.recipes.local.AppDatabase
-import com.kakao.recipes.local.RecipeDao
-import com.kakao.recipes.repositories.RecipeRepository
-import com.kakao.recipes.useCases.GetRecipesUseCase
+import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
+import com.kakao.recipes.data.local.AppDatabase
+import com.kakao.recipes.data.local.RecipeDao
+import com.kakao.recipes.data.repositories.RecipeRepository
+import com.kakao.recipes.domain.useCases.GetRecipesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,10 +1,10 @@
 package com.kakao.recipes
 
 import android.content.Context
-import com.kakao.recipes.data.Recipe
-import com.kakao.recipes.data.RecipeCategory
-import com.kakao.recipes.local.RecipeDao
-import com.kakao.recipes.repositories.RecipeRepository
+import com.kakao.recipes.domain.model.Recipe
+import com.kakao.recipes.domain.model.RecipeCategory
+import com.kakao.recipes.data.local.RecipeDao
+import com.kakao.recipes.data.repositories.RecipeRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
