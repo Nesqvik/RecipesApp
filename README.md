@@ -1,23 +1,22 @@
-Мобильное приложение для поиска и просмотра популярных рецептов, разработанное на Kotlin с использованием современных инструментов Android.
-Проект реализован в рамках тестового задания и демонстрирует умение строить архитектуру, работать с API и обеспечивать офлайн-функциональность.
+A mobile application for discovering and viewing popular recipes, developed in Kotlin using modern Android tools. The project was implemented as part of a test assignment and demonstrates proficiency in architecture design, API integration, and offline functionality.
 
-Основные возможности: 
+Key Features:
 
-    • Отображение популярных рецептов (Random Recipes из Spoonacular API)
-    • Детальная информация о каждом рецепте (фото, описание, ингредиенты и т.п.)
-    • Поиск рецептов по названию
-    • Пагинация в списке рецептов
-    • Поддержка офлайн-режима с кешированием
-    • Навигация между экранами с сохранением состояния
-    
-Используемые технологии:
+    • Display of popular recipes (Random Recipes from the Spoonacular API)
+    • Detailed information for each recipe (photo, description, ingredients, etc.)
+    • Recipe search by name
+    • Pagination in the recipe list
+    • Offline mode with caching support
+    • Navigation between screens with state preservation
 
-    • Kotlin – основной язык разработки
+Technologies Used:
+
+    • Kotlin – primary development language
     • Jetpack Compose
     • MVVM + Clean Architecture
-    • Hilt – внедрение зависимостей
-    • Retrofit – работа с сетью
-    • Room – локальное хранилище
-    • Coroutines + Flow – асинхронность и управление состоянием
-    • Coil – загрузка изображений
-    • Navigation Compose – навигация между экранами
+    • Hilt – dependency injection
+    • Retrofit – network communication
+    • Room – local database
+    • Coroutines + Flow – asynchronous programming and state management
+    • Coil – image loading
+    • Navigation Compose – navigation between screens
