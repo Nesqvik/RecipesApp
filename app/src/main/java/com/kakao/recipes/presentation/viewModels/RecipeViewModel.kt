@@ -22,8 +22,7 @@ import kotlinx.coroutines.flow.firstOrNull
 @HiltViewModel
 class RecipeViewModel @Inject constructor(
 
-    private val recipeRepositoryInterface: RecipeRepositoryInterface,
-    private val recipeDao: RecipeDao,
+    private val recipeRepositoryInterface: RecipeRepositoryInterface
 
     ) : ViewModel() {
 
@@ -97,7 +96,7 @@ class RecipeViewModel @Inject constructor(
 
     private fun loadRecipes(query: String) {
         viewModelScope.launch {
-            recipeDao.searchRecipesByName("%$query%").collect { recipesList ->
+            recipeRepositoryInterface.searchRecipesByName("%$query%").collect { recipesList ->
                 _recipes.value = recipesList
             }
         }
@@ -110,7 +109,7 @@ class RecipeViewModel @Inject constructor(
 
     fun getRecipeById(id: Int) {
         viewModelScope.launch {
-            recipeDao.getRecipeById(id).collect { recipe ->
+            recipeRepositoryInterface.getRecipeById(id).collect { recipe ->
                 _recipe.value = recipe
             }
         }
@@ -124,7 +123,7 @@ class RecipeViewModel @Inject constructor(
         viewModelScope.launch {
 
             try {
-                val localRecipes = recipeDao.getRecipes().firstOrNull()
+                val localRecipes = recipeRepositoryInterface.getRecipes().firstOrNull()
                 if (localRecipes.isNullOrEmpty()) {
 
                     val result = recipeRepositoryInterface.requestRecipes()
@@ -140,7 +139,7 @@ class RecipeViewModel @Inject constructor(
                         return@launch
                     }
                 }
-                recipeDao.getRecipes().collect { recipes ->
+                recipeRepositoryInterface.getRecipes().collect { recipes ->
                     _recipes.value = recipes
                     _allRecipes.value = recipes
                 }

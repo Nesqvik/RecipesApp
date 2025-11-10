@@ -11,6 +11,7 @@ import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
 import com.kakao.recipes.domain.model.Recipe
 import com.kakao.recipes.domain.model.RecipeCategory
 import com.kakao.recipes.data.local.RecipeDao
+import kotlinx.coroutines.flow.Flow
 import java.io.IOException
 import javax.inject.Inject
 
@@ -48,6 +49,14 @@ class RecipeRepository @Inject constructor(
         }
     }
 
+    override fun getRecipeById(id: Int): Flow<Recipe> {
+        return recipeDao.getRecipeById(id)
+    }
+
+    override fun searchRecipesByName(query: String): Flow<List<Recipe>> {
+        return recipeDao.searchRecipesByName(query)
+    }
+
     override fun getRecipeCategories(): List<RecipeCategory> {
         return listOf(
             RecipeCategory(RecipesKeys.MAIN_COURSE, "Show all"),
@@ -76,8 +85,8 @@ class RecipeRepository @Inject constructor(
         }
     }
 
-    override fun getRecipes(): List<Recipe> {
-        return recipesList
+    override fun getRecipes(): Flow<List<Recipe>> {
+        return recipeDao.getRecipes()
     }
 
     override suspend fun insertRecipes() {

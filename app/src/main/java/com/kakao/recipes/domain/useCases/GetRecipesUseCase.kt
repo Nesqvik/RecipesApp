@@ -8,8 +8,6 @@ class GetRecipesUseCase @Inject constructor(
     private val recipeRepositoryInterface: RecipeRepositoryInterface
 ) {
 
-    fun getRecipes(): List<Recipe> {
-        return recipeRepositoryInterface.getRecipes()
-    }
+
 
 }

@@ -2,11 +2,9 @@ package com.kakao.recipes
 
 import android.content.Context
 import com.kakao.recipes.domain.model.Recipe
-import com.kakao.recipes.domain.model.RecipeCategory
 import com.kakao.recipes.data.local.RecipeDao
 import com.kakao.recipes.data.repositories.RecipeRepository
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -23,6 +21,11 @@ class RecipeRepositoryUnitTest {
         context = mock(Context::class.java)
         recipeDao = mock(RecipeDao::class.java)
         repository = RecipeRepository(context, recipeDao)
+    }
+    @Test
+    fun getRecipeCategories() {
+        val list = repository.getRecipeCategories()
+        assert(!list.isNullOrEmpty())
     }
 
     @Test
