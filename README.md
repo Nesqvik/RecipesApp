@@ -22,8 +22,8 @@ Technologies Used:
     • Navigation Compose – navigation between screens
     
 <p float="left">
-  <img src="screen_2.jpg" alt="Screen 1" width="300" style="margin-right:25px;" />
-  <img src="screen_1.jpg" alt="Screen 2" width="300" />
+  <img src="screenshots/screen_2.jpg" alt="Screen 1" width="300" style="margin-right:25px;" />
+  <img src="screenshots/screen_1.jpg" alt="Screen 2" width="300" />
 </p>
 
 
