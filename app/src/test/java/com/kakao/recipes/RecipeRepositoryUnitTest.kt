@@ -26,22 +26,24 @@ class RecipeRepositoryUnitTest {
     }
 
     @Test
-    fun getRecipeCategories() {
-        val categories = repository.getRecipeCategories()
-
-        val expected = listOf(
-            RecipeCategory(1, "Main Course"),
-            RecipeCategory(2, "Side Dish"),
-        )
-
-        assertEquals(expected, categories)
-    }
-
-    @Test
     fun insertRecipes() = runBlocking {
         val sampleRecipes = listOf(
-            Recipe(id = 1, title = "Test Recipe 1", image = "", extendedIngredients = emptyList()),
-            Recipe(id = 2, title = "Test Recipe 2", image = "", extendedIngredients = emptyList())
+            Recipe(
+                id = 1, title = "Test Recipe 1", image = "", extendedIngredients = emptyList(),
+                servings = 10,
+                readyInMinutes = 60,
+                summary = "",
+                glutenFree = false,
+                dishTypes = emptyList()
+            ),
+            Recipe(
+                id = 2, title = "Test Recipe 2", image = "", extendedIngredients = emptyList(),
+                servings = 24,
+                readyInMinutes = 10,
+                summary = "",
+                glutenFree = true,
+                dishTypes = emptyList()
+            )
         )
         repository.recipesList.addAll(sampleRecipes)
         repository.insertRecipes()

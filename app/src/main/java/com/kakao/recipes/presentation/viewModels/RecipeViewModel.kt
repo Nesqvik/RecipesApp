@@ -9,7 +9,6 @@ import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
 import com.kakao.recipes.domain.model.Recipe
 import com.kakao.recipes.domain.model.RecipeCategory
 import com.kakao.recipes.data.local.RecipeDao
-import com.kakao.recipes.domain.useCases.GetRecipesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +24,6 @@ class RecipeViewModel @Inject constructor(
 
     private val recipeRepositoryInterface: RecipeRepositoryInterface,
     private val recipeDao: RecipeDao,
-    private val getRecipesUseCase: GetRecipesUseCase,
 
     ) : ViewModel() {
 
@@ -81,7 +79,6 @@ class RecipeViewModel @Inject constructor(
 
     fun loadNextPage() {
         if (isLoading || isEndReached || isFiltering) return
-
 
         viewModelScope.launch {
             isLoading = true
@@ -143,7 +140,6 @@ class RecipeViewModel @Inject constructor(
                         return@launch
                     }
                 }
-
                 recipeDao.getRecipes().collect { recipes ->
                     _recipes.value = recipes
                     _allRecipes.value = recipes
@@ -167,6 +163,5 @@ class RecipeViewModel @Inject constructor(
         isFiltering = false
         _recipes.value = _allRecipes.value
     }
-
 
 }

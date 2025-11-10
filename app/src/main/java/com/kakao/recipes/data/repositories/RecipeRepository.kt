@@ -27,7 +27,6 @@ class RecipeRepository @Inject constructor(
     init {
         this.recipesInterface =
             ApiClient.getInstance()!!.getClient().create(RecipesInterface::class.java)
-
     }
 
     override fun isConnected(context: Context): Boolean {
