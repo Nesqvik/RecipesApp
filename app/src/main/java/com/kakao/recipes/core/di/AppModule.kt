@@ -1,10 +1,10 @@
-package com.kakao.recipes
+package com.kakao.recipes.core.di
 
 import android.content.Context
-import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
 import com.kakao.recipes.data.local.AppDatabase
 import com.kakao.recipes.data.local.RecipeDao
 import com.kakao.recipes.data.repositories.RecipeRepository
+import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
 import com.kakao.recipes.domain.useCases.GetRecipesUseCase
 import dagger.Module
 import dagger.Provides
@@ -26,7 +26,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
-        return AppDatabase.getDatabase(context)
+        return AppDatabase.Companion.getDatabase(context)
     }
 
     @Provides
@@ -51,4 +51,3 @@ object AppModule {
     }
 
 }
-

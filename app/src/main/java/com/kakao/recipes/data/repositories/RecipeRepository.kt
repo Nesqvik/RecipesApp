@@ -3,9 +3,8 @@ package com.kakao.recipes.data.repositories
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
-import com.kakao.recipes.ApiClient
-import com.kakao.recipes.RecipesKeys
+import com.kakao.recipes.data.remote.ApiClient
+import com.kakao.recipes.core.util.RecipesKeys
 import com.kakao.recipes.data.apiInterfaces.RecipesInterface
 import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
 import com.kakao.recipes.domain.model.Recipe
@@ -30,7 +29,7 @@ class RecipeRepository @Inject constructor(
             ApiClient.getInstance()!!.getClient().create(RecipesInterface::class.java)
     }
 
-    override fun isConnected(context: Context): Boolean {
+    private fun isConnected(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
@@ -74,13 +73,10 @@ class RecipeRepository @Inject constructor(
         }
         return try {
             val response = recipesInterface.getRecipe()
-            recipesList.clear()
-            recipesList.addAll(response.recipes)
-            insertRecipes()
+            insertRecipes(response.recipes)
             Result.success(Unit)
 
         } catch (e: Exception) {
-            Log.e("Recipes_ERROR", "Network error: ${e.localizedMessage}")
             Result.failure(e)
         }
     }
@@ -89,8 +85,8 @@ class RecipeRepository @Inject constructor(
         return recipeDao.getRecipes()
     }
 
-    override suspend fun insertRecipes() {
-        recipeDao.insertAll(recipesList)
+    private suspend fun insertRecipes(list: List<Recipe>) {
+        recipeDao.insertAll(list)
     }
 
 }

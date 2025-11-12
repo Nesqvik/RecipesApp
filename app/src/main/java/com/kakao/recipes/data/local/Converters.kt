@@ -1,4 +1,4 @@
-package com.kakao.recipes
+package com.kakao.recipes.data.local
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

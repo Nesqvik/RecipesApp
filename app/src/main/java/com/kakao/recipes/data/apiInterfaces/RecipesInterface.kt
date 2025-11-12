@@ -1,6 +1,6 @@
 package com.kakao.recipes.data.apiInterfaces
 
-import com.kakao.recipes.RecipesKeys
+import com.kakao.recipes.core.util.RecipesKeys
 import com.kakao.recipes.domain.model.RecipesResponse
 import retrofit2.http.GET
 

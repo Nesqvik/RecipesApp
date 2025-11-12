@@ -1,5 +1,4 @@
-package com.kakao.recipes
-
+package com.kakao.recipes.core.util
 
 abstract class RecipesKeys {
     companion object {
@@ -25,5 +24,3 @@ abstract class RecipesKeys {
 
     }
 }
-
-

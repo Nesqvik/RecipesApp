@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
 import com.kakao.recipes.domain.model.Recipe
 import com.kakao.recipes.domain.model.RecipeCategory
-import com.kakao.recipes.data.local.RecipeDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -93,6 +92,7 @@ class RecipeViewModel @Inject constructor(
             isLoading = false
         }
     }
+
 
     private fun loadRecipes(query: String) {
         viewModelScope.launch {

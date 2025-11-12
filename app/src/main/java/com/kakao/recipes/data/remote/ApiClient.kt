@@ -1,9 +1,11 @@
-package com.kakao.recipes
+package com.kakao.recipes.data.remote
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.kakao.recipes.core.util.RecipesKeys
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -38,7 +40,7 @@ class ApiClient {
             .readTimeout(100, TimeUnit.SECONDS).build()
 
         this.retrofit = Retrofit.Builder()
-            .baseUrl(RecipesKeys.BASE_URL)
+            .baseUrl(RecipesKeys.Companion.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client2)
             .build()
@@ -48,12 +50,12 @@ class ApiClient {
 
 }
 class ApiKeyInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+    override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         val originalUrl = originalRequest.url
 
         val newUrl = originalUrl.newBuilder()
-            .addQueryParameter("apiKey", RecipesKeys.API_KEY)
+            .addQueryParameter("apiKey", RecipesKeys.Companion.API_KEY)
             .build()
 
         val newRequest = originalRequest.newBuilder()

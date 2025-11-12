@@ -3,7 +3,7 @@ package com.kakao.recipes.domain.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import com.kakao.recipes.RecipesKeys
+import com.kakao.recipes.core.util.RecipesKeys
 
 
 @Entity(tableName = "recipes")

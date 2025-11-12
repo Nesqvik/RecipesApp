@@ -52,6 +52,8 @@ import com.kakao.recipes.domain.model.Recipe
 import com.kakao.recipes.domain.model.RecipeCategory
 import com.kakao.recipes.presentation.ui.items.RecipeItem
 import com.kakao.recipes.presentation.viewModels.RecipeViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 
@@ -79,7 +81,7 @@ fun RecipeScreen(
 
 
         if (isEndReached.value) {
-            // viewModel.loadMoreRecipes()
+             //viewModel.loadMoreRecipes()
         }
 
     }
@@ -227,8 +229,6 @@ fun RecipeCategoriesList(viewModel: RecipeViewModel, recipeCategories: List<Reci
             .padding(vertical = 8.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(18.dp, Alignment.CenterHorizontally)
-
-
     ) {
         items(categories) { category ->
             CategoryItem(category, viewModel)
@@ -236,6 +236,7 @@ fun RecipeCategoriesList(viewModel: RecipeViewModel, recipeCategories: List<Reci
     }
 }
 
+@OptIn(FlowPreview::class)
 @Composable
 fun RecipesList(
     viewModel: RecipeViewModel,
@@ -247,9 +248,15 @@ fun RecipesList(
     val listState = rememberLazyListState()
     val previousIndex = remember { mutableStateOf(0) }
 
+    LaunchedEffect(recipesList) {
+        listState.scrollToItem(0)
+    }
+
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .distinctUntilChanged()
+            .debounce(300)
+
             .collect { lastVisibleIndex ->
                 val isScrollingDown = lastVisibleIndex != null && lastVisibleIndex > previousIndex.value
                 previousIndex.value = lastVisibleIndex ?: previousIndex.value
