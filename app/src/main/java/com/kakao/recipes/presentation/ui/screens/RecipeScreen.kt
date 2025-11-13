@@ -1,5 +1,6 @@
 package com.kakao.recipes.presentation.ui.screens
 
+import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -133,8 +135,7 @@ fun RecipeScreen(
                 viewModel.onSearchQueryChanged(it)
             })
 
-
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = stringResource(R.string.categories),
@@ -178,7 +179,7 @@ fun RecipeScreen(
                     )
                 }
             } else {
-                RecipesList(viewModel, recipes, navController, { recipe ->
+                RecipesList(viewModel, recipes, navController, listState, { recipe ->
                     selectedRecipe = recipe
                 })
             }
@@ -242,30 +243,16 @@ fun RecipesList(
     viewModel: RecipeViewModel,
     recipesList: List<Recipe>,
     navController: NavController,
+    listState: LazyListState,
     onItemClick: (Recipe) -> Unit
 ) {
 
-    val listState = rememberLazyListState()
-    val previousIndex = remember { mutableStateOf(0) }
-
-    LaunchedEffect(recipesList) {
-        listState.scrollToItem(0)
-    }
-
     LaunchedEffect(listState) {
+
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-            .distinctUntilChanged()
-            .debounce(300)
-
             .collect { lastVisibleIndex ->
-                val isScrollingDown = lastVisibleIndex != null && lastVisibleIndex > previousIndex.value
-                previousIndex.value = lastVisibleIndex ?: previousIndex.value
-
-                if (
-                    lastVisibleIndex != null &&
-                    lastVisibleIndex >= 2 &&
-                    lastVisibleIndex % 3 == 2 &&
-                    isScrollingDown &&
+                if (lastVisibleIndex != null &&
+                    lastVisibleIndex >= recipesList.size - 3 &&
                     !viewModel.isLoading &&
                     !viewModel.isEndReached
                 ) {

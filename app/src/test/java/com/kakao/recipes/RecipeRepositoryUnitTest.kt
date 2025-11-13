@@ -49,7 +49,7 @@ class RecipeRepositoryUnitTest {
             )
         )
         repository.recipesList.addAll(sampleRecipes)
-        repository.insertRecipes()
+        repository.insertRecipes(sampleRecipes)
         verify(recipeDao).insertAll(sampleRecipes)
     }
 }

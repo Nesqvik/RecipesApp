@@ -1,12 +1,14 @@
 package com.kakao.recipes.domain.useCases
 
 import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
+import com.kakao.recipes.domain.model.RecipeCategory
 import javax.inject.Inject
 
-class RequestRecipesUseCase @Inject constructor(
+
+class GetRecipeCategoriesUseCase @Inject constructor(
     private val repository: RecipeRepositoryInterface
 ) {
-    suspend operator fun invoke(): Result<Unit> {
-        return repository.requestRecipes()
+    operator fun invoke(): List<RecipeCategory> {
+        return repository.getRecipeCategories()
     }
 }

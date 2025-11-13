@@ -1,16 +1,15 @@
 package com.kakao.recipes.domain.useCases
 
-import com.kakao.recipes.domain.model.Recipe
 import com.kakao.recipes.domain.interfaces.RecipeRepositoryInterface
-import javax.inject.Inject
+import com.kakao.recipes.domain.model.Recipe
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 
-class GetRecipesUseCase @Inject constructor(
+class GetRecipeByIdUseCase @Inject constructor(
     private val repository: RecipeRepositoryInterface
 ) {
-    operator fun invoke(): Flow<List<Recipe>> {
-        return repository.getRecipes()
+    operator fun invoke(id: Int): Flow<Recipe> {
+        return repository.getRecipeById(id)
     }
 }
-

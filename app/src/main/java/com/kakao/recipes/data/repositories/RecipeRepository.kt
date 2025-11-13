@@ -85,7 +85,7 @@ class RecipeRepository @Inject constructor(
         return recipeDao.getRecipes()
     }
 
-    private suspend fun insertRecipes(list: List<Recipe>) {
+    suspend fun insertRecipes(list: List<Recipe>) {
         recipeDao.insertAll(list)
     }
 
