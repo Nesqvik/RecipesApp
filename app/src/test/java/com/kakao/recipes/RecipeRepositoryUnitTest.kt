@@ -48,7 +48,7 @@ class RecipeRepositoryUnitTest {
                 dishTypes = emptyList()
             )
         )
-        repository.recipesList.addAll(sampleRecipes)
+
         repository.insertRecipes(sampleRecipes)
         verify(recipeDao).insertAll(sampleRecipes)
     }

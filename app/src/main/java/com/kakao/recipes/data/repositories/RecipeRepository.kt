@@ -21,8 +21,6 @@ class RecipeRepository @Inject constructor(
 ) : RecipeRepositoryInterface {
 
     private var recipesInterface: RecipesInterface
-    val recipesList: ArrayList<Recipe> = arrayListOf()
-
 
     init {
         this.recipesInterface =

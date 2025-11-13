@@ -99,7 +99,6 @@ fun RecipeDetailsScreen(
                         .fillMaxWidth()
                         .height(300.dp)
                 )
-
                 Card(
                     shape = RoundedCornerShape(24.dp),
                     modifier = Modifier
@@ -171,7 +170,6 @@ fun RecipeDetailsScreen(
                     )
                 }
             }
-
             AnimatedVisibility(visible = expanded) {
                 Card(
                     modifier = Modifier
@@ -186,9 +184,7 @@ fun RecipeDetailsScreen(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = "Ingredients",
                 modifier = Modifier
@@ -241,16 +237,13 @@ fun IngredientRowEmpty() {
                 modifier = Modifier.size(24.dp)
             )
         }
-
         Spacer(modifier = Modifier.width(12.dp))
-
         Column {
             Text(text = "Ingredient", fontWeight = FontWeight.SemiBold)
             Text(text = "5")
         }
     }
 }
-
 
 @Composable
 fun IngredientRow(recipe: Recipe, ingredientId: Int) {
@@ -278,16 +271,13 @@ fun IngredientRow(recipe: Recipe, ingredientId: Int) {
                         modifier = Modifier.size(24.dp)
                     )
                 }
-
                 Spacer(modifier = Modifier.width(12.dp))
-
                 Text(
                     text = recipe.extendedIngredients[ingredientId].name,
                 )
             }
         }
 }
-
 
 @Composable
 fun InfoItem(icon: Int, text: String) {
@@ -306,5 +296,4 @@ fun InfoItem(icon: Int, text: String) {
             fontSize = 15.sp
         )
     }
-
 }

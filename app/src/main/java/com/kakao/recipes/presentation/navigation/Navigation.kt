@@ -18,7 +18,6 @@ fun Navigation() {
         composable("RecipeScreen") {
             RecipeScreen(navController = navController)
         }
-
         composable(
             "recipeDetail/{recipeId}",
             arguments = listOf(navArgument("recipeId") { type = NavType.IntType })
@@ -26,7 +25,6 @@ fun Navigation() {
             val recipeId = backStackEntry.arguments?.getInt("recipeId") ?: 0 // Default to 0 if null
             RecipeDetailsScreen(navController = navController, recipeId = recipeId)
         }
-
     }
 }
 

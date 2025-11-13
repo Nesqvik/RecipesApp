@@ -55,8 +55,6 @@ import com.kakao.recipes.domain.model.RecipeCategory
 import com.kakao.recipes.presentation.ui.items.RecipeItem
 import com.kakao.recipes.presentation.viewModels.RecipeViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +62,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 fun RecipeScreen(
     viewModel: RecipeViewModel = hiltViewModel<RecipeViewModel>(), navController: NavController,
 ) {
-
     val recipeCategories by viewModel.recipeCategories.collectAsState()
     val recipes by viewModel.recipes.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -81,11 +78,9 @@ fun RecipeScreen(
         viewModel.getRecipeCategories()
         viewModel.getRecipes()
 
-
         if (isEndReached.value) {
              //viewModel.loadMoreRecipes()
         }
-
     }
 
     Scaffold(
@@ -110,7 +105,6 @@ fun RecipeScreen(
                 .padding(padding)
                 .fillMaxSize()
         ) {
-
             Column(modifier = Modifier.padding(16.dp)) {
                 Column(
                     modifier = Modifier
@@ -130,11 +124,9 @@ fun RecipeScreen(
                     )
                 }
             }
-
             SearchBar(searchQuery = searchQuery, onSearchQueryChanged = {
                 viewModel.onSearchQueryChanged(it)
             })
-
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
@@ -142,11 +134,8 @@ fun RecipeScreen(
                 modifier = Modifier.padding(start = 16.dp),
                 fontSize = 18.sp
             )
-
             RecipeCategoriesList(viewModel, recipeCategories)
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = stringResource(R.string.popular_recipes),
                 fontSize = 18.sp,
