@@ -45,11 +45,11 @@ class RecipeViewModel @Inject constructor(
     var isEndReached by mutableStateOf(false)
 
     init {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             searchQuery.collect { query ->
                 searchRecipes(query)
             }
-        }
+        }*/
     }
 
     fun loadNextPage() {
@@ -70,17 +70,10 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    private fun searchRecipes(query: String) {
-        viewModelScope.launch {
-            recipeUseCases.searchRecipes("%$query%").collect { recipesList ->
-                _recipes.value = recipesList
-            }
-        }
-    }
-
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
         isFiltering = query.isNotBlank()
+        getRecipes(query)
     }
 
     fun getRecipeById(id: Int) {
@@ -95,9 +88,14 @@ class RecipeViewModel @Inject constructor(
         _recipeCategories.value = recipeUseCases.getRecipeCategories()
     }
 
-    fun getRecipes() {
+    fun getRecipes(query: String) {
         viewModelScope.launch {
-            recipeUseCases.getRecipes()
+
+            /*recipeUseCases.searchRecipes(query).collect { recipesList ->
+                _recipes.value = recipesList
+            }*/
+
+            recipeUseCases.getRecipes(query)
                 .collect { result ->
                     when (result) {
                         is Result.Loading -> {

@@ -50,7 +50,7 @@ class RecipeRepository @Inject constructor(
     }
 
     override fun searchRecipesByName(query: String): Flow<List<Recipe>> {
-        return recipeDao.searchRecipesByName(query)
+        return recipeDao.searchRecipesByName("%$query%")
     }
 
     override fun getRecipeCategories(): List<RecipeCategory> {

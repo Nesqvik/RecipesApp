@@ -77,7 +77,7 @@ fun RecipeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getRecipeCategories()
-        viewModel.getRecipes()
+        viewModel.getRecipes(searchQuery)
 
         if (isEndReached.value) {
             //viewModel.loadMoreRecipes()
