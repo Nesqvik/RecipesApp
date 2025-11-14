@@ -14,8 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.runtime.setValue
 import com.kakao.recipes.domain.useCases.RecipeUseCases
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.firstOrNull
+import com.kakao.recipes.core.util.Result
 
 
 @HiltViewModel
@@ -33,43 +32,23 @@ class RecipeViewModel @Inject constructor(
     private val _recipe = MutableStateFlow<Recipe?>(null)
     val recipe: StateFlow<Recipe?> = _recipe
 
-    var isLoading by mutableStateOf(false)
-    var isEndReached by mutableStateOf(false)
-
     private val _noInternet = MutableStateFlow<Boolean>(false)
     val noInternet: StateFlow<Boolean> = _noInternet
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-
     private val _allRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+
     private var isFiltering by mutableStateOf(false)
+    var isLoading by mutableStateOf(false)
+    var isEndReached by mutableStateOf(false)
 
     init {
-        loadInitialRecipes()
-
         viewModelScope.launch {
             searchQuery.collect { query ->
-                loadRecipes(query)
+                searchRecipes(query)
             }
-        }
-    }
-
-    private fun loadInitialRecipes() {
-        viewModelScope.launch {
-            isLoading = true
-            val new = recipeUseCases.loadMoreRecipes()
-            if (new == null) {
-                //_noInternet.value = true
-            } else {
-                //_noInternet.value = false
-                if (new.isEmpty()) {
-                    isEndReached = true
-                }
-            }
-            delay(2000)
-            isLoading = false
         }
     }
 
@@ -91,7 +70,7 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    private fun loadRecipes(query: String) {
+    private fun searchRecipes(query: String) {
         viewModelScope.launch {
             recipeUseCases.searchRecipes("%$query%").collect { recipesList ->
                 _recipes.value = recipesList
@@ -118,32 +97,27 @@ class RecipeViewModel @Inject constructor(
 
     fun getRecipes() {
         viewModelScope.launch {
+            recipeUseCases.getRecipes()
+                .collect { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            isLoading = true
+                        }
 
-            try {
-                val localRecipes = recipeUseCases.getRecipes().firstOrNull()
-                if (localRecipes.isNullOrEmpty()) {
+                        is Result.Success -> {
+                            isLoading = false
+                            _noInternet.value = false
+                            _recipes.value = result.data
+                            _allRecipes.value = result.data
+                        }
 
-                    val result = recipeUseCases.requestRecipes()
-
-                    if (result.isFailure) {
-                        _noInternet.value = true
-                        return@launch
-                    } else {
-                        _noInternet.value = false
-                    }
-
-                    if (result.isFailure) {
-                        return@launch
+                        is Result.Error -> {
+                            isLoading = false
+                            _noInternet.value = true
+                            Log.e("RecipesViewModel", "Error: ${result.exception?.message}")
+                        }
                     }
                 }
-                recipeUseCases.getRecipes().collect { recipes ->
-                    _recipes.value = recipes
-                    _allRecipes.value = recipes
-                }
-
-            } catch (e: Exception) {
-                Log.e("RecipesViewModel", "Failed to fetch recipes: ${e.message}")
-            }
         }
     }
 

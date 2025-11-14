@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeDao {
-    @Query("SELECT * FROM recipes")
+    @Query("SELECT * FROM recipes ORDER BY title ASC")
     fun getRecipes(): Flow<List<Recipe>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

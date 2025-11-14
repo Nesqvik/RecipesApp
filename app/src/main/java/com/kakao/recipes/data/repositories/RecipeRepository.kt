@@ -23,8 +23,7 @@ class RecipeRepository @Inject constructor(
     private var recipesInterface: RecipesInterface
 
     init {
-        this.recipesInterface =
-            ApiClient.getInstance()!!.getClient().create(RecipesInterface::class.java)
+        this.recipesInterface = ApiClient.getInstance()!!.getClient().create(RecipesInterface::class.java)
     }
 
     private fun isConnected(context: Context): Boolean {

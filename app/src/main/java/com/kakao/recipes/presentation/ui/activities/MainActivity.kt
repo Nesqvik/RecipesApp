@@ -1,4 +1,4 @@
-package com.kakao.recipes.presentation
+package com.kakao.recipes.presentation.ui.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,9 +13,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-           Navigation()
+            Navigation()
         }
     }
 
 }
-

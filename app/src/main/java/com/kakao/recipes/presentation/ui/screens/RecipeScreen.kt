@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -79,7 +80,7 @@ fun RecipeScreen(
         viewModel.getRecipes()
 
         if (isEndReached.value) {
-             //viewModel.loadMoreRecipes()
+            //viewModel.loadMoreRecipes()
         }
     }
 
@@ -173,7 +174,6 @@ fun RecipeScreen(
                 })
             }
         }
-
     }
 }
 
@@ -249,36 +249,34 @@ fun RecipesList(
                 }
             }
     }
+        LazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(vertical = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
 
-    LazyColumn(
-        state = listState,
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .fillMaxWidth(),
+            ) {
+            items(recipesList, key = { it.id }) { recipe ->
+                RecipeItem(recipe = recipe, navController, onRecipeItemClick = {
+                    onItemClick(recipe)
 
-        ) {
-        items(recipesList, key = { it.id }) { recipe ->
-            RecipeItem(recipe = recipe, navController, onRecipeItemClick = {
-                onItemClick(recipe)
-
-            })
-
-        }
-        item {
-            if (viewModel.isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = Color.Black
-                    )
+                })
+            }
+            item {
+                if (viewModel.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = Color.Black
+                        )
+                    }
                 }
             }
         }
-    }
 }
 
 
